@@ -1,0 +1,37 @@
+docker run --rm -it -v /flush/davab27/CENIIT/bids/data:/data:ro -v /flush/davab27/CENIIT/bids/out:/out nipreps/fmriprep:21.0.0 /data /out participant
+
+
+# Standard run
+docker run --rm -it -v /flush/davab27/CENIIT/bids/data:/data:ro \
+	-v /flush/davab27/CENIIT/bids/out:/out \
+	-v /home/davab27/.licenses/freesurfer-license.txt:/license.txt \
+	nipreps/fmriprep:21.0.0 \
+	--fs-license-file /license.txt /data /out participant
+
+# T1w output space
+docker run --rm -it -v /flush/davab27/CENIIT/bids/data:/data:ro \
+	-v /flush/davab27/CENIIT/bids/outT1w:/out \
+	-v /home/davab27/.licenses/freesurfer-license.txt:/license.txt \
+	nipreps/fmriprep:21.0.0 \
+	--output-spaces T1w --fs-license-file /license.txt /data /out participant | tee outT1w.txt
+
+# T1w output space + SyN-SDC
+docker run --rm -it -v /flush/davab27/CENIIT/bids/data:/data:ro \
+	-v /flush/davab27/CENIIT/bids/out-T1w-SyN:/out \
+	-v /home/davab27/.licenses/freesurfer-license.txt:/license.txt \
+	nipreps/fmriprep:21.0.0 \
+	--output-spaces T1w --use-syn-sdc --fs-license-file /license.txt /data /out participant | tee out-T1w-SyN.txt
+
+# Check if rerunning when data exists already skips everything
+docker run --rm -it -v /flush/davab27/CENIIT/bids/data:/data:ro \
+	-v /flush/davab27/CENIIT/bids/out:/out \
+	-v /home/davab27/.licenses/freesurfer-license.txt:/license.txt \
+	nipreps/fmriprep:21.0.0 \
+	--output-spaces T1w --use-syn-sdc --fs-license-file /license.txt /data /out participant | tee out-rerun.txt
+
+# T1w output space, SyN-SDC, no FreeSurfer
+docker run --rm -it -v /flush/davab27/CENIIT/fmriprep/data:/data:ro \
+	-v /flush/davab27/CENIIT/fmriprep/out-T1w-SyN-noFS:/out \
+	-v /home/davab27/.licenses/freesurfer-license.txt:/license.txt \
+	nipreps/fmriprep:21.0.0 \
+	--output-spaces T1w --use-syn-sdc --fs-no-reconall --fs-license-file /license.txt /data /out participant | tee out-T1w-SyN-noFS.txt
